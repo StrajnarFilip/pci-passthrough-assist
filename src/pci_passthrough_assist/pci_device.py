@@ -14,6 +14,16 @@ class PciDevice:
     def is_vga(self) -> bool:
         return exists(f"/sys/bus/pci/devices/{self.device_id}/boot_vga")
 
+    def vendor_code(self, remove_prefix: bool = True) -> str:
+        with open(f"/sys/bus/pci/devices/{self.device_id}/vendor") as vendor:
+            return vendor.read() if not remove_prefix else vendor.read(
+            ).lstrip("0x")
+
+    def device_code(self, remove_prefix: bool = True) -> str:
+        with open(f"/sys/bus/pci/devices/{self.device_id}/vendor") as device:
+            return device.read() if not remove_prefix else device.read(
+            ).lstrip("0x")
+
     def unbind_driver(self):
         with open(f"/sys/bus/pci/devices/{self.device_id}/driver/unbind",
                   "w") as device_driver:
