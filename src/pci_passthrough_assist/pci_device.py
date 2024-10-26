@@ -25,8 +25,12 @@ class PciDevice:
             ).lstrip("0x")
 
     def unbind_driver(self):
-        with open(f"/sys/bus/pci/devices/{self.device_id}/driver/unbind",
-                  "w") as device_driver:
+        driver_unbind_path = f"/sys/bus/pci/devices/{self.device_id}/driver/unbind"
+        if not exists(driver_unbind_path):
+            print("Device is not bound to any driver.")
+            return
+
+        with open(driver_unbind_path, "w") as device_driver:
             device_driver.write(self.device_id)
 
     def set_driver_override(self, reserved_for_driver: str):
