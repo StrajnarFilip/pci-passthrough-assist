@@ -14,6 +14,19 @@ class PciDevice:
     def is_vga(self) -> bool:
         return exists(f"/sys/bus/pci/devices/{self.device_id}/boot_vga")
 
+    def unbind_driver(self):
+        with open(f"/sys/bus/pci/devices/{self.device_id}/driver/unbind",
+                  "w") as device_driver:
+            device_driver.write(self.device_id)
+
+    def bind_to_driver(self, driver_to_bind: str, unbind_first: bool = True):
+        if unbind_first:
+            self.unbind_driver()
+
+        with open(f"/sys/bus/pci/drivers/{driver_to_bind}/bind",
+                  "w") as driver:
+            driver.write(self.device_id)
+
     def devices_in_iommu_group(self) -> list['PciDevice']:
         device_ids: list[str] = listdir(
             f"/sys/bus/pci/devices/{self.device_id}/iommu_group/devices")
