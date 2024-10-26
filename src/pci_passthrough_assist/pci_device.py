@@ -29,6 +29,11 @@ class PciDevice:
                   "w") as device_driver:
             device_driver.write(self.device_id)
 
+    def set_driver_override(self, reserved_for_driver: str):
+        with open(f"/sys/bus/pci/devices/{self.device_id}/driver_override",
+                  "w") as driver_override:
+            driver_override.write(reserved_for_driver)
+
     def bind_to_driver(self, driver_to_bind: str, unbind_first: bool = True):
         if unbind_first:
             self.unbind_driver()
