@@ -1,5 +1,4 @@
-from pci_passthrough_assist.pci import driver_of_pci_device
-from os.path import exists
+from os.path import exists, realpath, basename
 from os import listdir
 
 
@@ -10,7 +9,11 @@ class PciDevice:
         self.device_id = device_id
 
     def driver_name(self) -> str:
-        return driver_of_pci_device(self.device_id)
+        pci_driver_path = f"/sys/bus/pci/devices/{self.device_id}/driver"
+        if not exists(pci_driver_path):
+            return "NO-DRIVER-BOUND"
+        driver_directory: str = realpath(pci_driver_path)
+        return basename(driver_directory)
 
     def is_vga(self) -> bool:
         return exists(f"/sys/bus/pci/devices/{self.device_id}/boot_vga")
