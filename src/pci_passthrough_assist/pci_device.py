@@ -42,8 +42,12 @@ class PciDevice:
         if unbind_first:
             self.unbind_driver()
 
-        with open(f"/sys/bus/pci/drivers/{driver_to_bind}/bind",
-                  "w") as driver:
+        driver_bind_path = f"/sys/bus/pci/drivers/{driver_to_bind}/bind"
+        if not exists(driver_bind_path):
+            print(f"Can't bind to driver: {driver_bind_path}.")
+            return
+
+        with open(driver_bind_path, "w") as driver:
             driver.write(self.device_id)
 
     def devices_in_iommu_group(self) -> list['PciDevice']:
