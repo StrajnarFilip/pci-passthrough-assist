@@ -55,8 +55,11 @@ class PciDevice:
             driver.write(self.device_id)
 
     def devices_in_iommu_group(self) -> list['PciDevice']:
-        device_ids: list[str] = listdir(
-            f"/sys/bus/pci/devices/{self.device_id}/iommu_group/devices")
+        iommu_group_device_path = f"/sys/bus/pci/devices/{self.device_id}/iommu_group/devices"
+        if not exists(iommu_group_device_path):
+            print("Device does not have iommu_group devices.")
+            return []
+        device_ids: list[str] = listdir(iommu_group_device_path)
         return [PciDevice(device_id) for device_id in device_ids]
 
     def __str__(self) -> str:
