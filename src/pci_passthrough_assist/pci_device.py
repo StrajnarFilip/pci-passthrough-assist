@@ -5,7 +5,7 @@ from os import listdir
 class PciDevice:
 
     def __init__(self, device_id: str):
-        assert exists(f"/sys/bus/pci/devices/{self.device_id}")
+        assert exists(f"/sys/bus/pci/devices/{device_id}")
         self.device_id = device_id
 
     def driver_name(self) -> str:
